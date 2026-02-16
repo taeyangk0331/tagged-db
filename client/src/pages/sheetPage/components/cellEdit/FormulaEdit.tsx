@@ -17,6 +17,10 @@ const Container = styled.div`
   flex-grow: 1;
   gap: 4px;
   width: fix-content;
+
+  font-family: monospace;
+  color: #072907be;
+  font-weight: 800;
 `;
 
 interface Props {

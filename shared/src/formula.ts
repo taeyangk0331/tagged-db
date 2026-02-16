@@ -9,9 +9,9 @@ export const MAIN_FUNCTION = "fx";
 export const TAB_SPACES = "    ";
 
 export const DEFAULT_FORMULAS = {
-  expression: `"Output"`,
+  expression: `# Use column_name to access column values\n"Output"`,
   statements: `return "Output"`,
-  module: `def ${MAIN_FUNCTION}(row):\n${TAB_SPACES}return "Output"`,
+  module: `# Use row["column_name"] to access column values\ndef ${MAIN_FUNCTION}(row):\n${TAB_SPACES}return "Output"`,
 } as const;
 
 export const createModule = (
