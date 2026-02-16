@@ -15,7 +15,16 @@ export interface SheetData extends SheetMeta {
   tagCache: Record<ColumnId, string[] | undefined>;
 }
 
-export type ColumnType = "text" | "number" | "enum" | "tags" | "date";
+export const COLUMN_TYPES = [
+  "text",
+  "number",
+  "enum",
+  "tags",
+  "date",
+  "formula",
+] as const;
+
+export type ColumnType = (typeof COLUMN_TYPES)[number];
 
 export type ColumnValue = string;
 
@@ -24,7 +33,8 @@ export type Column =
   | NumberColumn
   | EnumColumn
   | TagsColumn
-  | DateColumn;
+  | DateColumn
+  | FormulaColumn;
 
 interface BaseColumn {
   id: string;
@@ -57,7 +67,14 @@ interface DateColumn extends BaseColumn {
   type: "date";
 }
 
-interface Row {
+export type FormulaType = "module" | "expression";
+export interface FormulaColumn extends BaseColumn {
+  type: "formula";
+  formula?: string;
+  formulaType?: FormulaType;
+}
+
+export interface Row {
   id: string;
   values: Partial<Record<ColumnId, ColumnValue>>;
 }

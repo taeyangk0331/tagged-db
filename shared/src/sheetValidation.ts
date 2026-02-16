@@ -1,13 +1,13 @@
 import { ColumnEditAction } from "./types/action.js";
 import { Err, Ok, Result } from "./types/result.js";
-import { ColumnType } from "./types/sheet.js";
+import { COLUMN_TYPES, ColumnType } from "./types/sheet.js";
 
 export function sanitizeTitle(title: string): string {
   return title.trim();
 }
 
 export function validateType(type: string): type is ColumnType {
-  return ["text", "number", "enum", "tags", "date"].includes(type);
+  return COLUMN_TYPES.includes(type as ColumnType);
 }
 
 export function parseTags(input: string): string[] {
@@ -63,4 +63,18 @@ export function createDefaultEnum(options: string[]): string {
     i += 1;
   }
   return DEFAULT_TEXT + i;
+}
+
+// Formula
+export function parseRowvalue(
+  columnType: ColumnType,
+  value: string | undefined,
+): string | number | null {
+  if (!value) {
+    return null;
+  }
+  if (columnType === "number") {
+    return Number(value);
+  }
+  return value;
 }

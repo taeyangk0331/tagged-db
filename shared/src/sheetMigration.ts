@@ -221,6 +221,14 @@ function updateColumn(
       }
 
       sheetData.tagCache = updateTagCache(sheetData);
+      break;
+    case "formula":
+      if (column.type !== "formula") {
+        return Err("Column is not a formula column");
+      }
+      column.formula = payload.formula;
+      column.formulaType = payload.formulaType;
+      break;
   }
 
   return Ok({ ...sheetData, columns });
@@ -231,7 +239,7 @@ function createColumn(
   title: string = "Untitled column",
   type: ColumnType = "text",
 ): Column {
-  return { id: columnId, title, type, options: [] };
+  return { id: columnId, title, type: type };
 }
 
 function addColumn(

@@ -1,7 +1,11 @@
+import CodeEditor from "@uiw/react-textarea-code-editor";
 import {
   Column,
+  COLUMN_TYPES,
   ColumnType,
   EnumColumn,
+  FormulaColumn,
+  FormulaType,
   SheetData,
   TagsColumn,
 } from "@app/shared/types/sheet";
@@ -15,6 +19,12 @@ import { ModalContainer } from "../../../components/ModalContainer";
 import { ColumnEditAction, ColumnEditType } from "@app/shared/types/action";
 import { popupAlert, popupConfirm } from "../../../utils/popup";
 import { errorToString } from "@app/shared/util";
+import {
+  DEFAULT_FORMULA_TYPE,
+  DEFAULT_FORMULAS,
+  FORMULA_TYPE_EXPRESSION,
+  FORMULA_TYPE_MODULE,
+} from "@app/shared/formula";
 
 // Style
 const Container = styled.div`
@@ -35,13 +45,13 @@ const ButtonRow = styled.div`
 
 // Component
 
-const COLUMN_TYPES: ColumnType[] = ["text", "number", "enum", "tags", "date"];
 const COLUMN_TYPE_NAMES: Record<ColumnType, string> = {
   text: "Text",
   number: "Number",
   enum: "Dropdown",
   tags: "Tags",
   date: "Date",
+  formula: "Formula",
 };
 
 interface Prop {
@@ -121,6 +131,11 @@ export const ColumnEdit = ({
           column={column}
           actions={actions}
         />
+      );
+      break;
+    case "formula":
+      advancedEditEl = (
+        <FormulaAdvancedEdit column={column} actions={actions} />
       );
       break;
     default:
@@ -223,6 +238,7 @@ export const ColumnEdit = ({
 interface EditRowProps {
   children?: React.ReactNode;
   label: string;
+  labelFor?: string;
 }
 const Td = styled.td`
   padding-top: 8px;
@@ -230,10 +246,12 @@ const Td = styled.td`
 `;
 const TdLabel = styled(Td)``;
 
-const EditRow = ({ label, children }: EditRowProps) => {
+const EditRow = ({ label, children, labelFor = "" }: EditRowProps) => {
   return (
     <tr>
-      <TdLabel>{label}</TdLabel>
+      <TdLabel>
+        <label htmlFor={labelFor}>{label}</label>
+      </TdLabel>
       <Td>{children}</Td>
     </tr>
   );
@@ -427,6 +445,87 @@ const TagsAdvancedEdit = (props: {
           </div>
         </EditRow>
       ))}
+    </>
+  );
+};
+
+const FormulaAdvancedEdit = (props: {
+  column: FormulaColumn;
+  actions: RefObject<Actions>;
+}) => {
+  const { column, actions } = props;
+
+  const [editedFormula, setEditedFormula] = useState<string>(
+    column.formula ??
+      DEFAULT_FORMULAS[column.formulaType ?? DEFAULT_FORMULA_TYPE],
+  );
+  const [editedFormulaType, setEditedFormulaType] = useState<FormulaType>(
+    column.formulaType ?? DEFAULT_FORMULA_TYPE,
+  );
+  const formulasCacheMap = useRef<Record<FormulaType, string>>({
+    ...DEFAULT_FORMULAS,
+  });
+
+  // On first load
+  useEffect(() => {
+    formulasCacheMap.current = DEFAULT_FORMULAS;
+    formulasCacheMap.current[column.formulaType ?? DEFAULT_FORMULA_TYPE] =
+      column.formula ?? "";
+  }, [column]);
+
+  // Dep
+  useEffect(() => {
+    if (editedFormula === "") return;
+    actions.current["formula"] = {
+      editType: "formula",
+      formula: editedFormula,
+      formulaType: editedFormulaType,
+    };
+  }, [actions, column.formula, editedFormula, editedFormulaType]);
+
+  const onFormulaChange = (updatedFormula: string) => {
+    formulasCacheMap.current[editedFormulaType] = updatedFormula;
+    setEditedFormula(updatedFormula);
+  };
+
+  const onFormulaTypeChange = (updatedFormulaType: FormulaType) => {
+    if (updatedFormulaType === editedFormulaType) return;
+
+    setEditedFormula(formulasCacheMap.current[updatedFormulaType]);
+    setEditedFormulaType(updatedFormulaType);
+  };
+
+  return (
+    <>
+      <EditRow label={`Formula:`}>
+        <CodeEditor
+          language="python"
+          style={{
+            width: "500px",
+            height: "300px",
+            fontFamily: "monospace",
+            fontWeight: 700,
+            backgroundColor: "#f3f3f3",
+          }}
+          data-color-mode="light"
+          value={editedFormula}
+          onChange={(e) => onFormulaChange(e.target.value)}
+          placeholder={DEFAULT_FORMULAS[editedFormulaType]}
+        />
+      </EditRow>
+      <EditRow label="Advanced:" labelFor="formula-type-module">
+        <input
+          id="formula-type-module"
+          type="checkbox"
+          onChange={(e) => {
+            if (e.target.checked) {
+              onFormulaTypeChange(FORMULA_TYPE_MODULE);
+            } else {
+              onFormulaTypeChange(FORMULA_TYPE_EXPRESSION);
+            }
+          }}
+        />
+      </EditRow>
     </>
   );
 };

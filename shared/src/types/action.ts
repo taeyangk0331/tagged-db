@@ -1,4 +1,4 @@
-import { ColumnType } from "./sheet.js";
+import { ColumnType, FormulaType } from "./sheet.js";
 
 export type SheetActionType =
   | "update_cell"
@@ -50,14 +50,16 @@ export type ColumnEditType =
   | "change_type"
   | "enum_update"
   | "reorder"
-  | "tag_rename";
+  | "tag_rename"
+  | "formula";
 
 export type ColumnEditAction =
   | ColumnRenameAction
   | ColumnChangeTypeAction
   | ColumnEnumUpdateAction
   | ColumnReorderAction
-  | ColumnTagRenameAction;
+  | ColumnTagRenameAction
+  | ColumnFormulaEditAction;
 
 interface BaseColumnAction {
   editType: ColumnEditType;
@@ -83,6 +85,12 @@ interface ColumnEnumUpdateAction extends BaseColumnAction {
 interface ColumnTagRenameAction extends BaseColumnAction {
   editType: "tag_rename";
   tagMap: Record<string, string>; // oldName -> newName
+}
+
+interface ColumnFormulaEditAction extends BaseColumnAction {
+  editType: "formula";
+  formula: string;
+  formulaType: FormulaType;
 }
 
 interface ColumnReorderAction extends BaseColumnAction {
