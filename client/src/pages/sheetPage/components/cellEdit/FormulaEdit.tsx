@@ -10,6 +10,7 @@ import {
   DEFAULT_FORMULAS,
   MAIN_FUNCTION,
 } from "@app/shared/formula";
+import { COLORS } from "../../../../styles/colors";
 
 const Container = styled.div`
   display: flex;
@@ -21,6 +22,8 @@ const Container = styled.div`
   font-family: monospace;
   color: #072907be;
   font-weight: 800;
+  background-color: ${COLORS.CODE_BLOCK};
+  padding: 2px 8px;
 `;
 
 interface Props {
@@ -29,14 +32,7 @@ interface Props {
   sheetData: SheetData;
 }
 
-let runtimePromise: Promise<void> | null = null;
-
-function getRuntime() {
-  if (!runtimePromise) {
-    runtimePromise = Starlark.init(wasmUrl);
-  }
-  return runtimePromise;
-}
+const runtimePromise = Starlark.init(wasmUrl);
 
 export const FormulaEdit = ({ rowId, column, sheetData }: Props) => {
   const [runtimeReady, setRuntimeReady] = useState(false);
@@ -44,7 +40,9 @@ export const FormulaEdit = ({ rowId, column, sheetData }: Props) => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    getRuntime().then(() => setRuntimeReady(true));
+    runtimePromise.then(() => {
+      setRuntimeReady(true);
+    });
   }, []);
 
   useEffect(() => {
@@ -116,6 +114,23 @@ export const FormulaEdit = ({ rowId, column, sheetData }: Props) => {
     }
   }, [column.formula, column.formulaType, rowId, runtimeReady, sheetData]);
 
+  if (!runtimeReady) {
+    return (
+      <Container>
+        <div
+          style={{
+            fontFamily: "monospace",
+            color: "grey",
+            fontSize: "small",
+            fontWeight: 600,
+          }}
+        >
+          Computing...
+        </div>
+      </Container>
+    );
+  }
+
   return (
     <Container>
       {error ? (
@@ -125,7 +140,19 @@ export const FormulaEdit = ({ rowId, column, sheetData }: Props) => {
           {error}
         </div>
       ) : (
-        <div>{output}</div>
+        <div>
+          {output ? (
+            output
+          ) : (
+            <span
+              style={{
+                opacity: 0,
+              }}
+            >
+              -
+            </span>
+          )}
+        </div>
       )}
     </Container>
   );

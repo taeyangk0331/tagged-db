@@ -1,6 +1,7 @@
 export const COLORS = {
   DESKTOP: "#008483",
   PANEL: "#c4c4c4",
+  CODE_BLOCK: "#e7e7e7",
 
   WHITE: "white",
 
