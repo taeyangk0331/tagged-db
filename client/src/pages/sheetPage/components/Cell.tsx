@@ -1,4 +1,4 @@
-import { Column, ColumnValue, SheetData } from "@app/shared/types/sheet";
+import { Column, ColumnValue } from "@app/shared/types/sheet";
 import React, { useCallback, useMemo } from "react";
 import { Td } from "./Table";
 import { TextEdit } from "./cellEdit/TextEdit";
@@ -7,12 +7,13 @@ import { EnumEdit } from "./cellEdit/EnumEdit";
 import { TagEdit } from "./cellEdit/TagEdit";
 import { DateEdit } from "./cellEdit/DateEdit";
 import { FormulaEdit } from "./cellEdit/FormulaEdit";
+import { ComputedValue } from "../../../utils/formulaComputation";
 
 interface Prop {
   rowId: string;
   columnInfo: Column;
-  sheetData: SheetData;
   value?: ColumnValue;
+  formulaValue?: ComputedValue;
   tagSuggestions?: string[];
   onTagClicked: (tag: string, e: React.MouseEvent) => void;
 
@@ -24,10 +25,10 @@ export const Cell = React.memo(
     rowId,
     columnInfo,
     value,
+    formulaValue,
     onCellUpdate,
     tagSuggestions,
     onTagClicked,
-    sheetData,
   }: Prop) => {
     const onChanged = useCallback(
       (updatedValue: ColumnValue) => {
@@ -64,22 +65,16 @@ export const Cell = React.memo(
         case "date":
           return <DateEdit value={value} onChange={onChanged} />;
         case "formula":
-          return (
-            <FormulaEdit
-              rowId={rowId}
-              column={columnInfo}
-              sheetData={sheetData}
-            />
-          );
+          return <FormulaEdit value={formulaValue} />;
       }
     }, [
       columnInfo,
-      value,
+      formulaValue,
       onChanged,
+      onTagClicked,
       rowId,
       tagSuggestions,
-      onTagClicked,
-      sheetData,
+      value,
     ]);
 
     return <Td>{EditComponent}</Td>;
