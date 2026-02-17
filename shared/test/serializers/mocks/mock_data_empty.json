@@ -1,0 +1,43 @@
+{
+  "id": "1b8fe3a9-028f-4081-9602-0ebd7c46e514",
+  "name": "mock_data_empty",
+  "created": "2026-02-17T14:36:31.785Z",
+  "updated": "2026-02-17T14:36:31.785Z",
+  "columns": [
+    {
+      "id": "c500347a-feeb-4bd8-925a-889f7d41d63c",
+      "title": "",
+      "type": "text"
+    },
+    {
+      "id": "eb41ced1-c022-48ae-8f15-a2e441994078",
+      "title": "",
+      "type": "text"
+    },
+    {
+      "id": "f0a2c633-5999-4604-976f-574cd00dbe2e",
+      "title": "",
+      "type": "text"
+    },
+    {
+      "id": "76043466-1d2c-4a97-bd19-82fc778cca35",
+      "title": "",
+      "type": "text"
+    },
+    {
+      "id": "086a7917-81f0-4218-9bbb-4d84ee789924",
+      "title": "",
+      "type": "text"
+    },
+    {
+      "id": "48e873c9-1108-4d0a-911a-744164a800c3",
+      "title": "",
+      "type": "text"
+    }
+  ],
+  "rows": [
+    { "id": "1cd7246c-b8dc-425a-b539-08c56b4ec568", "values": {} },
+    { "id": "6dc721d0-0fcd-4904-9454-e04d4702f430", "values": {} }
+  ],
+  "tagCache": {}
+}

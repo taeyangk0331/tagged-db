@@ -1,0 +1,84 @@
+{
+  "id": "690c7ae1-0864-4fb0-991b-1ce6e2d34a22",
+  "name": "Test",
+  "created": "2026-02-15T16:21:39.574Z",
+  "updated": "2026-02-16T07:47:45.513Z",
+  "columns": [
+    {
+      "id": "f44fc422-92f5-48d1-b89d-c44dae05258f",
+      "title": "Name",
+      "type": "text"
+    },
+    {
+      "id": "2dea79a6-a01c-48de-b4e0-858f1a7d3279",
+      "title": "Author",
+      "type": "text",
+      "options": []
+    },
+    {
+      "id": "0948ba32-ac6b-4498-8071-1f0c6b958da0",
+      "title": "Genre",
+      "type": "text",
+      "options": ["Fantasy", "Mystery", "Surreal"]
+    },
+    {
+      "id": "e8a5b738-890e-456d-bda5-38ca78c16bc3",
+      "title": "Score",
+      "type": "text",
+      "options": []
+    },
+    {
+      "id": "546a24e2-5191-4557-b129-910808f794ce",
+      "title": "Tags",
+      "type": "text",
+      "options": []
+    }
+  ],
+  "rows": [
+    {
+      "id": "356151f3-148b-4a97-b704-92a6467c023c",
+      "values": {
+        "546a24e2-5191-4557-b129-910808f794ce": "weird",
+        "e8a5b738-890e-456d-bda5-38ca78c16bc3": "8",
+        "f44fc422-92f5-48d1-b89d-c44dae05258f": "And Then There Were None",
+        "2dea79a6-a01c-48de-b4e0-858f1a7d3279": "Agatha Christie",
+        "0948ba32-ac6b-4498-8071-1f0c6b958da0": "Mystery"
+      }
+    },
+    {
+      "id": "b0e43982-acab-4e96-94af-7574f65364de",
+      "values": {
+        "546a24e2-5191-4557-b129-910808f794ce": "epic",
+        "e8a5b738-890e-456d-bda5-38ca78c16bc3": "7",
+        "f44fc422-92f5-48d1-b89d-c44dae05258f": "Lord of the Ring",
+        "2dea79a6-a01c-48de-b4e0-858f1a7d3279": "J. R. R. Tolkien",
+        "0948ba32-ac6b-4498-8071-1f0c6b958da0": "Fantasy"
+      }
+    },
+    {
+      "id": "f8112304-75f8-46da-b35c-f8d1f2d5b358",
+      "values": {
+        "546a24e2-5191-4557-b129-910808f794ce": "weird, fun",
+        "e8a5b738-890e-456d-bda5-38ca78c16bc3": "9",
+        "f44fc422-92f5-48d1-b89d-c44dae05258f": "Dance, Dance, Dance",
+        "2dea79a6-a01c-48de-b4e0-858f1a7d3279": "Haruki Murakami",
+        "0948ba32-ac6b-4498-8071-1f0c6b958da0": "Surreal"
+      }
+    },
+    {
+      "id": "1111",
+      "values": {}
+    },
+    {
+      "id": "ff7c895e-974c-48df-a5f4-aefb7ecafc54",
+      "values": {
+        "f44fc422-92f5-48d1-b89d-c44dae05258f": "The ABC Murders",
+        "e8a5b738-890e-456d-bda5-38ca78c16bc3": "10",
+        "2dea79a6-a01c-48de-b4e0-858f1a7d3279": "Agatha Christie",
+        "0948ba32-ac6b-4498-8071-1f0c6b958da0": "Mystery",
+        "546a24e2-5191-4557-b129-910808f794ce": "epic, fun"
+      }
+    }
+  ],
+  "tagCache": {}
+}

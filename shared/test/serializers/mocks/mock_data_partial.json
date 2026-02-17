@@ -1,0 +1,69 @@
+{
+  "id": "fa6d2405-ce0b-4073-b235-fcc702623868",
+  "name": "mock_data_partial",
+  "created": "2026-02-17T14:40:35.987Z",
+  "updated": "2026-02-17T14:40:35.987Z",
+  "columns": [
+    {
+      "id": "6813f13f-31a6-4477-8a03-d1c3c13509e9",
+      "title": "Name",
+      "type": "text"
+    },
+    {
+      "id": "8a703475-7006-466c-976d-8a94f592faca",
+      "title": "Author",
+      "type": "text"
+    },
+    {
+      "id": "1e707219-e178-453f-a8be-00de8d3de0d7",
+      "title": "Genre",
+      "type": "text"
+    },
+    {
+      "id": "3a977de8-a368-4fde-8865-e37cb7c855b9",
+      "title": "Score",
+      "type": "text"
+    },
+    {
+      "id": "2fe9f5d5-6170-4db7-a667-55ad8ecc4f43",
+      "title": "Tags",
+      "type": "text"
+    }
+  ],
+  "rows": [
+    {
+      "id": "a3d8f7bf-d0ef-4023-b63d-776f2a9416cd",
+      "values": {
+        "6813f13f-31a6-4477-8a03-d1c3c13509e9": "And Then There Were None"
+      }
+    },
+    {
+      "id": "08559b04-600c-4d54-90b7-e519619b77db",
+      "values": {
+        "6813f13f-31a6-4477-8a03-d1c3c13509e9": "Lord of the Ring",
+        "8a703475-7006-466c-976d-8a94f592faca": "J. R. R. Tolkien",
+        "1e707219-e178-453f-a8be-00de8d3de0d7": "Fantasy"
+      }
+    },
+    {
+      "id": "87e5c5bd-8128-41a4-ac2e-3df50c704bb2",
+      "values": {
+        "6813f13f-31a6-4477-8a03-d1c3c13509e9": "Dance, Dance, Dance",
+        "8a703475-7006-466c-976d-8a94f592faca": "Haruki Murakami",
+        "1e707219-e178-453f-a8be-00de8d3de0d7": "Surreal",
+        "3a977de8-a368-4fde-8865-e37cb7c855b9": "9",
+        "2fe9f5d5-6170-4db7-a667-55ad8ecc4f43": "weird, fun"
+      }
+    },
+    {
+      "id": "55ea2310-565e-4a6f-b725-92a466ac589c",
+      "values": {
+        "6813f13f-31a6-4477-8a03-d1c3c13509e9": "The ABC Murders",
+        "8a703475-7006-466c-976d-8a94f592faca": "Agatha Christie",
+        "1e707219-e178-453f-a8be-00de8d3de0d7": "Mystery",
+        "3a977de8-a368-4fde-8865-e37cb7c855b9": "10"
+      }
+    }
+  ],
+  "tagCache": {}
+}

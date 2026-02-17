@@ -41,11 +41,7 @@ export function parseCsvToSheetData(
     return Err("CSV has no header row.");
   }
 
-  console.log(headerRow);
-
-  const columnTitles = headerRow.map((title, index) =>
-    title.trim() === "" ? `Column ${index + 1}` : title.trim(),
-  );
+  const columnTitles = headerRow.map((title, index) => title.trim());
 
   const rawDataRows = parsedRows.slice(1);
 
@@ -89,7 +85,6 @@ export function parseCsvToSheetData(
     tagCache: {},
   };
 
-  console.log(sheetData);
   return Ok(sheetData);
 }
 

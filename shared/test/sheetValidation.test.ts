@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { parseTags } from "../src/sheetValidation";
+import { parseTags } from "../src/sheetValidation.js";
 
 describe("sheetValidation", () => {
   describe("parseTags", () => {
