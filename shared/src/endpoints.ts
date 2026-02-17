@@ -43,6 +43,11 @@ export const DELETE_SHEET: Endpoint<{ sheetId: string }, undefined, undefined> =
     method: "delete",
   };
 
+export const IMPORT_SHEET: Endpoint<{}, { sheetData: SheetData }, undefined> = {
+  url: "/api/sheets/:sheetId/import",
+  method: "post",
+};
+
 export const GET_SHEET_DATA: Endpoint<
   { sheetId: string },
   undefined,

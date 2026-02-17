@@ -10,6 +10,7 @@ import {
   GET_SHEET_DATA,
   GET_SHEETS,
   HANDSHAKE,
+  IMPORT_SHEET,
   LOGIN,
   ParamsOf,
   RENAME_SHEET,
@@ -115,6 +116,15 @@ export const apiBackend = (baseUrl: string): StorageBackend => ({
         return Err(handleErrorObject(e));
       }
     });
+  },
+  async importSheet(sheetData: SheetData) {
+    try {
+      const res = await fetchEndpoint(baseUrl, IMPORT_SHEET, {}, { sheetData });
+      await handleHttpError(res);
+      return Ok();
+    } catch (e) {
+      return Err(handleErrorObject(e));
+    }
   },
 });
 

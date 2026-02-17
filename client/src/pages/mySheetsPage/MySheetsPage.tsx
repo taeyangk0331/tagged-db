@@ -17,6 +17,8 @@ import { COLORS } from "../../styles/colors";
 import { border } from "../../styles/mixins";
 import { DesktopHeader } from "../../components/desktop/DesktopHeader";
 import { useDraggableWindow } from "../../hooks/useDraggableWindow";
+import { exportCsv, importCsv } from "../../utils/csvUtil";
+import type { SheetMeta } from "@app/shared/types/sheet";
 import { WindowHeader } from "../../components/desktop/WindowHeader";
 import { popupAlert, popupConfirm, popupPrompt } from "../../utils/popup";
 import { sanitizeTitle } from "@app/shared/sheetValidation";
@@ -236,38 +238,55 @@ export const MySheetsPage = () => {
   const [creatingSheetMap, setCreatingSheetMap] = useState<
     Partial<Record<string, string>>
   >({});
+  const [importingSheetMap, setImportingSheetMap] = useState<
+    Partial<Record<string, string>>
+  >({});
   const creatingSheet = useMemo(
     () => creatingSheetMap[storageBackend.id],
     [creatingSheetMap, storageBackend.id],
   );
+  const importingSheet = useMemo(
+    () => importingSheetMap[storageBackend.id],
+    [importingSheetMap, storageBackend.id],
+  );
+  const isCurrentStorageUnavailable =
+    brokenStorages.includes(storageBackend.id) ||
+    loadingStorages.includes(storageBackend.id);
+  const isImportDisabled =
+    !!creatingSheet || !!importingSheet || isCurrentStorageUnavailable;
 
-  const fetchSheets = useCallback(async () => {
-    if (
-      storageBackend.backendType === "api" &&
-      !userRemotes.remotes.find((b) => b.url === storageBackend.url)
-    ) {
-      // Attempting to open remote tab that doesn't exist
-      setUseLocalStorage();
-      return;
-    }
+  const fetchSheets = useCallback(
+    async (preserveSelection = false) => {
+      if (
+        storageBackend.backendType === "api" &&
+        !userRemotes.remotes.find((b) => b.url === storageBackend.url)
+      ) {
+        // Attempting to open remote tab that doesn't exist
+        setUseLocalStorage();
+        return;
+      }
 
-    setLoadingStorages((s) => [...s, storageBackend.id]);
-    setBrokenStorages((s) => s.filter((s) => s !== storageBackend.id));
+      setLoadingStorages((s) => [...s, storageBackend.id]);
+      setBrokenStorages((s) => s.filter((s) => s !== storageBackend.id));
 
-    const res = await storageBackend.getSheets();
+      const res = await storageBackend.getSheets();
 
-    setLoadingStorages((s) => s.filter((s) => s !== storageBackend.id));
-    if (res.ok) {
-      setSheetsMap((m) => ({ ...m, [storageBackend.id]: res.value }));
-      setSelectedSheet("");
-    } else if (userRemotes.remotes.find((b) => b.url === storageBackend.id)) {
-      setBrokenStorages((s) => [...s, storageBackend.id]);
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      console.error(
-        `Could not connect to remote: ${storageBackend.id}.\n\nReason: ${res.error}`,
-      );
-    }
-  }, [setUseLocalStorage, storageBackend, userRemotes.remotes]);
+      setLoadingStorages((s) => s.filter((s) => s !== storageBackend.id));
+      if (res.ok) {
+        setSheetsMap((m) => ({ ...m, [storageBackend.id]: res.value }));
+        if (!preserveSelection) {
+          setSelectedSheet("");
+        }
+      } else if (userRemotes.remotes.find((b) => b.url === storageBackend.id)) {
+        setBrokenStorages((s) => [...s, storageBackend.id]);
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        console.error(
+          `Could not connect to remote: ${storageBackend.id}.\n\nReason: ${res.error}`,
+        );
+      }
+    },
+    [setUseLocalStorage, storageBackend, userRemotes.remotes],
+  );
 
   useEffect(() => {
     fetchSheets();
@@ -374,6 +393,61 @@ export const MySheetsPage = () => {
     }
   }, [selectedSheet, sheets, storageBackend, fetchSheets]);
 
+  // Exporting/Importing function
+  const onExportSheet = useCallback(async () => {
+    if (!selectedSheet) {
+      return;
+    }
+
+    const sheetDataRes = await storageBackend.getSheetData(selectedSheet);
+    if (!sheetDataRes.ok) {
+      alert(sheetDataRes.error);
+      return;
+    }
+    exportCsv(sheetDataRes.value);
+  }, [selectedSheet, storageBackend]);
+
+  const onImportSheet = useCallback(async () => {
+    if (isImportDisabled) {
+      return;
+    }
+    const csvRes = await importCsv(sheetsMap[storageBackend.id] || []);
+    if (!csvRes.ok) {
+      alert("Failed to parse CSV: " + csvRes.error);
+      return;
+    }
+
+    const importedSheet = csvRes.value;
+    setImportingSheetMap((state) => ({
+      ...state,
+      [storageBackend.id]: importedSheet.name || "Imported Sheet",
+    }));
+
+    try {
+      const importRes = await storageBackend.importSheet(importedSheet);
+      if (!importRes.ok) {
+        alert(importRes.error);
+        await fetchSheets();
+        return;
+      }
+
+      setSheetsMap((map) => {
+        const storageSheets = map[storageBackend.id] || [];
+        return {
+          ...map,
+          [storageBackend.id]: [...storageSheets, importedSheet],
+        };
+      });
+      setSelectedSheet(importedSheet.id);
+      await fetchSheets(true);
+    } finally {
+      setImportingSheetMap((state) => ({
+        ...state,
+        [storageBackend.id]: undefined,
+      }));
+    }
+  }, [fetchSheets, isImportDisabled, sheetsMap, storageBackend]);
+
   const getUrl = useCallback(() => {
     let url = `/sheet/${selectedSheet}`;
     if (storageBackend.queryParam) {
@@ -416,22 +490,25 @@ export const MySheetsPage = () => {
             onDeleteSheet();
           } else if (e.key === "o") {
             onOpenSheet();
+          } else if (e.key === "i") {
+            onImportSheet();
+          } else if (e.key === "x") {
+            onExportSheet();
           }
         }}
       >
         <WindowHeader isDragging={isDragging} dragHandleProps={dragHandleProps}>
-          <PiFoldersLight style={{ width: "16px", height: "16px" }} /> My Sheets
+          <PiFoldersLight /> My Sheets{" "}
         </WindowHeader>
         <ButtonContainer>
           <MenuButton
             onClick={onCreateSheet}
-            disabled={
-              !!creatingSheet ||
-              brokenStorages.includes(storageBackend.id) ||
-              loadingStorages.includes(storageBackend.id)
-            }
+            disabled={!!creatingSheet || isCurrentStorageUnavailable}
           >
             <u>N</u>ew
+          </MenuButton>
+          <MenuButton onClick={onImportSheet} disabled={isImportDisabled}>
+            <u>I</u>mport
           </MenuButton>
           <VSep />
           <MenuButton onClick={onOpenSheet} disabled={!selectedSheet}>
@@ -442,6 +519,9 @@ export const MySheetsPage = () => {
           </MenuButton>
           <MenuButton onClick={onDeleteSheet} disabled={!selectedSheet}>
             <u>D</u>elete
+          </MenuButton>
+          <MenuButton onClick={onExportSheet} disabled={!selectedSheet}>
+            E<u>x</u>port
           </MenuButton>
         </ButtonContainer>
         <HSep />
@@ -602,6 +682,9 @@ export const MySheetsPage = () => {
             )}
             {creatingSheet && (
               <FileCreating>Creating "{creatingSheet}"...</FileCreating>
+            )}
+            {importingSheet && (
+              <FileCreating>Importing "{importingSheet}"...</FileCreating>
             )}
           </FilesContainer>
         </FilesContainerOutline>

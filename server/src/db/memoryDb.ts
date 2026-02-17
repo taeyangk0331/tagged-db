@@ -52,6 +52,9 @@ export const memoryDb: DBInterface = {
     }
     db.sheetData[id] = res.value;
   },
+  async importSheet(sheetData) {
+    db.sheetData[sheetData.id] = sheetData;
+  },
 };
 
 const db: {

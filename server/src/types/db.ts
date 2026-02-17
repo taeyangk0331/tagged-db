@@ -15,4 +15,7 @@ export interface DBInterface {
   // Sheet
   getSheetData(id: string): Promise<SheetData>;
   updateSheet(id: string, SheetAction: SheetAction): Promise<void>;
+
+  // Import
+  importSheet(sheetData: SheetData): Promise<void>;
 }

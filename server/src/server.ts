@@ -7,6 +7,7 @@ import {
   GET_SHEETS,
   GET_SHEET_DATA,
   HANDSHAKE,
+  IMPORT_SHEET,
   LOGIN,
   RENAME_SHEET,
   UPDATE_SHEET,
@@ -174,6 +175,14 @@ if (
     UPDATE_SHEET.url,
     async function handler(request, reply) {
       await db.updateSheet(request.params.sheetId, request.body.action);
+    },
+  );
+
+  // Import
+  server[IMPORT_SHEET.method]<EndpointOf<typeof IMPORT_SHEET>>(
+    IMPORT_SHEET.url,
+    async function handler(request, reply) {
+      await db.importSheet(request.body.sheetData);
     },
   );
 

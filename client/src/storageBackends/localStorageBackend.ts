@@ -75,4 +75,11 @@ export const localStorageBackend: StorageBackend = {
     setSheet(sheetId, updatedSheet.value);
     return Promise.resolve(Ok());
   },
+  importSheet(sheetData) {
+    const ids = getIds();
+    ids.push(sheetData.id);
+    setIds(ids);
+    setSheet(sheetData.id, sheetData);
+    return Promise.resolve(Ok());
+  },
 };

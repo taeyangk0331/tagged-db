@@ -16,13 +16,16 @@ interface BaseStorageBackend {
 
   getSheetData(sheetId: string): Promise<Result<SheetData>>;
   updateSheet(sheetId: string, SheetAction: SheetAction): Promise<Result<void>>;
+
+  // import/export
+  importSheet(sheetData: SheetData): Promise<Result<void>>;
 }
 
-interface LocalStorageBackend extends BaseStorageBackend {
+export interface LocalStorageBackend extends BaseStorageBackend {
   backendType: "local";
 }
 
-interface ApiStorageBackend extends BaseStorageBackend {
+export interface ApiStorageBackend extends BaseStorageBackend {
   backendType: "api";
   url: string;
 }
