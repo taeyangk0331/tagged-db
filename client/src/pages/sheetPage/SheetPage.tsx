@@ -1,4 +1,4 @@
-import { Column, ColumnValue, SheetData } from "@app/shared/types/sheet";
+import { Column, ColumnValue, Row, SheetData } from "@app/shared/types/sheet";
 import * as migrator from "@app/shared/sheetMigration";
 import {
   useCallback,
@@ -609,7 +609,9 @@ export const SheetPage = () => {
               {rows.map((row) => (
                 <tr key={row.id}>
                   <Td id="#" style={{ textAlign: "center", color: "#353535" }}>
-                    {sheetData.rows.indexOf(row) + 1}
+                    {sheetData.rows.indexOf(
+                      sheetData.rows.find((r) => r.id === row.id) as Row,
+                    ) + 1}
                   </Td>
                   {sheetData.columns.map((column) => (
                     <Cell
