@@ -27,13 +27,6 @@ const INITIAL_POSITION_RATIO = (1.0 - WINDOW_SIZE_RATIO) * 0.5;
 const INITIAL_POSITION_FALLBACK = 40;
 const MAX_HEIGHT_OFFSET = 40;
 
-interface Sheet {
-  id: string;
-  name: string;
-  created: string;
-  updated: string;
-}
-
 const Background = styled.div`
   position: absolute;
   inset: 0;
@@ -232,9 +225,9 @@ export const MySheetsPage = () => {
   const [loadingStorages, setLoadingStorages] = useState<string[]>([]);
   const [brokenStorages, setBrokenStorages] = useState<string[]>([]);
 
-  const [sheetsMap, setSheetsMap] = useState<Partial<Record<string, Sheet[]>>>(
-    {},
-  );
+  const [sheetsMap, setSheetsMap] = useState<
+    Partial<Record<string, SheetMeta[]>>
+  >({});
   const sheets = useMemo(
     () => sheetsMap[storageBackend.id],
     [sheetsMap, storageBackend.id],

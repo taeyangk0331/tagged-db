@@ -1,4 +1,3 @@
-import type { Result } from "@app/shared/types/result";
 import type { SheetMeta, SheetData } from "@app/shared/types/sheet";
 import type { SheetAction } from "@app/shared/types/action";
 
@@ -8,7 +7,7 @@ import type { SheetAction } from "@app/shared/types/action";
  */
 export interface DBInterface {
   // Files
-  getSheets(): Promise<SheetData[]>;
+  getSheets(): Promise<SheetMeta[]>;
   createSheet(title: string): Promise<SheetMeta>;
   renameSheet(id: string, title: string): Promise<void>;
   deleteSheet(id: string): Promise<void>;

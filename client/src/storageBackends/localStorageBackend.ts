@@ -4,10 +4,10 @@ import { StorageBackend } from "./storageBackend";
 import * as migrator from "@app/shared/sheetMigration";
 import { LS_KEY_INDEX, LS_KEY_SHEET } from "./constants";
 
-const getIndex = (): SheetMeta[] =>
+const getIds = (): string[] =>
   JSON.parse(localStorage.getItem(LS_KEY_INDEX) || "[]");
-const setIndex = (index: SheetMeta[]) =>
-  localStorage.setItem(LS_KEY_INDEX, JSON.stringify(index));
+const setIds = (ids: string[]) =>
+  localStorage.setItem(LS_KEY_INDEX, JSON.stringify(ids));
 
 const getSheet = (sheetId: string): SheetData | undefined => {
   const sheet = localStorage.getItem(LS_KEY_SHEET(sheetId));
@@ -15,44 +15,44 @@ const getSheet = (sheetId: string): SheetData | undefined => {
 };
 const setSheet = (sheetId: string, sheet: SheetData) =>
   localStorage.setItem(LS_KEY_SHEET(sheetId), JSON.stringify(sheet));
-const removeSheet = (sheetId: string) =>
+const removeSheet = (sheetId: string) => {
   localStorage.removeItem(LS_KEY_SHEET(sheetId));
+  const index = getIds();
+  index.splice(index.indexOf(sheetId), 1);
+  setIds(index);
+};
 
 export const localStorageBackend: StorageBackend = {
   backendType: "local",
   id: "localStorage",
   queryParam: "",
   getSheets: async (): Promise<Result<SheetMeta[]>> => {
-    const index = getIndex();
-    return Ok(index);
+    const ids = getIds();
+    return Ok(ids.map(getSheet).filter((s) => !!s));
   },
   renameSheet: function (id: string, title: string): Promise<Result<void>> {
-    const index = getIndex();
-    const sheet = index.find((s) => s.id === id);
+    const sheet = getSheet(id);
     if (!sheet) {
       return Promise.resolve(Err("Sheet not found"));
     }
     sheet.name = title;
-    setIndex(index);
+    setSheet(id, sheet);
     return Promise.resolve(Ok());
   },
-  deleteSheet: function (id: string): Promise<Result<void>> {
-    const index = getIndex();
-    const sheet = index.find((s) => s.id === id);
-    if (!sheet) {
-      return Promise.resolve(Err("Sheet not found"));
+  deleteSheet: async function (id: string): Promise<Result<void>> {
+    try {
+      removeSheet(id);
+      return Ok();
+    } catch (e) {
+      return Err(String(e));
     }
-    index.splice(index.indexOf(sheet), 1);
-    setIndex(index);
-    removeSheet(id);
-    return Promise.resolve(Ok());
   },
   createSheet: function (title: string): Promise<Result<SheetMeta>> {
-    const index = getIndex();
+    const ids = getIds();
     const uuid = crypto.randomUUID();
     const sheet = migrator.createSheet(uuid, title);
-    index.push(sheet);
-    setIndex(index);
+    ids.push(sheet.id);
+    setIds(ids);
     setSheet(uuid, sheet);
     return Promise.resolve(Ok(sheet));
   },

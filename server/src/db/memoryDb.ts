@@ -1,7 +1,6 @@
 import * as migration from "@app/shared/sheetMigration";
 import type { DBInterface } from "../types/db.js";
-import { Err, Ok, Result } from "@app/shared/types/result";
-import { type SheetMeta, type SheetData } from "@app/shared/types/sheet";
+import { type SheetData } from "@app/shared/types/sheet";
 import { resolve } from "path";
 import { writeFile } from "fs/promises";
 import { SheetError } from "../lib/errors.js";
@@ -29,7 +28,12 @@ export const memoryDb: DBInterface = {
     delete db.sheetData[sheetId];
   },
   async getSheets() {
-    return Object.values(db.sheetData);
+    return Object.values(db.sheetData).map((sheet) => ({
+      id: sheet.id,
+      name: sheet.name,
+      created: sheet.created,
+      updated: sheet.updated,
+    }));
   },
   async getSheetData(sheetId: string) {
     if (!db.sheetData[sheetId]) {

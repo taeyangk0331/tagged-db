@@ -22,14 +22,19 @@ async function saveSheetFile(fileName: string, data: SheetData): Promise<void> {
 }
 
 export const jsonFsDb: DBInterface = {
-  getSheets: async function (): Promise<SheetData[]> {
+  getSheets: async function (): Promise<SheetMeta[]> {
     const files = await readdir(DATA_DIR);
     const sheets = await Promise.all(
       files
         .filter((f) => f.endsWith(".json"))
         .map(async (f) => await getSheetFile(f)),
     );
-    return sheets;
+    return sheets.map((sheet) => ({
+      id: sheet.id,
+      name: sheet.name,
+      created: sheet.created,
+      updated: sheet.updated,
+    }));
   },
   createSheet: async function (title: string): Promise<SheetMeta> {
     const id = crypto.randomUUID();
